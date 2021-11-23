@@ -1,4 +1,4 @@
-@value makerGreen, makerWhite, makerBlack from '../../common/colors.css';
+@value makerGreen, makerBlack, makerWhite from '../../common/colors.css';
 
 .header {
   width: 100%;
