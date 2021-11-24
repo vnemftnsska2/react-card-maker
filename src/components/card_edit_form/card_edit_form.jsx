@@ -11,7 +11,6 @@ const CardEditForm = ({ FileInput, card, updateCard, deleteCard }) => {
     message,
     theme,
     fileName,
-    fileURL
   } = card;
 
   const onFileChange = file => {
@@ -41,7 +40,7 @@ const CardEditForm = ({ FileInput, card, updateCard, deleteCard }) => {
   return (
     <form className={styles.form}>
       <input className={styles.input} type="text" name="name" value={name} onChange={onChange} />
-      <input className={styles.input} type="text" name="company" value={name} onChange={onChange} />
+      <input className={styles.input} type="text" name="company" value={company} onChange={onChange} />
       <select className={styles.select} name="theme" value={theme} onChange={onChange}>
         <option value="light">Light</option>
         <option value="dark">Dark</option>
@@ -51,7 +50,7 @@ const CardEditForm = ({ FileInput, card, updateCard, deleteCard }) => {
       <input className={styles.input} type="text" name="email" value={email} onChange={onChange} />
       <textarea className={styles.textarea} name="message" value={message} onChange={onChange} />
       <div className={styles.fileInput}>
-        <FileInput name={name} onFileChange={onFileChange} />
+        <FileInput name={fileName} onFileChange={onFileChange} />
       </div>
       <Button name='Delete' onClick={onSubmit} />
     </form>
