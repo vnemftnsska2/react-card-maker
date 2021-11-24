@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import Footer from '../footer/footer';
 import Header from '../header/header';
@@ -6,63 +6,45 @@ import styles from './maker.module.css';
 import Editor from '../editor/editor';
 import Preview from '../preview/preview';
 
-const Maker = ({ FileInput, authService }) => {
-  const [cards, setCards] = useState({
-    '1': {
-      id: '1',
-      name: 'tnsska',
-      company: 'Dog Hous',
-      theme: 'dark',
-      title: 'Poodle King',
-      email: 'tnsska2@naver.com',
-      message: 'go for it',
-      fileName: 'tnsska2',
-      fileURL: null,
-    },
-    '2': {
-      id: '2',
-      name: 'tnsska2',
-      company: 'Dog Hous',
-      theme: 'light',
-      title: 'Poodle King',
-      email: 'tnsska2@naver.com',
-      message: 'go for it',
-      fileName: 'tnsska2',
-      fileURL: null,
-    },
-    '3': {
-      id: '3',
-      name: 'tnsska3',
-      company: 'Dog Hous',
-      theme: 'colorful',
-      title: 'Poodle King',
-      email: 'tnsska2@naver.com',
-      message: 'go for it',
-      fileName: 'tnsska2',
-      fileURL: 'tnsska2.png',
-    }
-  });
-
+const Maker = ({ FileInput, authService, cardRepository }) => {
   const navigate = useNavigate();
+  const { id } = useParams;
+  const [cards, setCards] = useState({});
+  const [userId, setUserId] = useState(id);
+
   const onLogout = () => {
     authService.logout();
   };
 
   useEffect(() => {
+    console.log('userid', id, userId);
+    if (!userId) {
+      return;
+    }
+    const stopSync = cardRepository.syncCards(userId, cards => {
+      setCards(cards);
+    })
+    return () => stopSync();
+  }, [userId]);
+
+  useEffect(() => {
     authService.onAuthChange((user) => {
-      if (!user) {
+      if (user) {
+        setUserId(user.id);
+      } else {
         navigate('/');
       }
     });
   });
 
   const createOrUpdateCard = card => {
-    console.log('update card', card);
     setCards(cards => {
       const updated = { ...cards };
       updated[card.id] = card;
       return updated;
     });
+
+    cardRepository.saveCard(userId, card);
   };
 
   const deleteCard = card => {
@@ -71,6 +53,8 @@ const Maker = ({ FileInput, authService }) => {
       delete updated[card.id];
       return updated;
     });
+
+    cardRepository.removeCard(userId, card);
   };
 
   return (
