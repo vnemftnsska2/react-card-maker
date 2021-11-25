@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
 import Footer from '../footer/footer';
 import Header from '../header/header';
@@ -8,16 +8,16 @@ import Preview from '../preview/preview';
 
 const Maker = ({ FileInput, authService, cardRepository }) => {
   const navigate = useNavigate();
-  const { id } = useParams;
+  const { state } = useLocation();
   const [cards, setCards] = useState({});
-  const [userId, setUserId] = useState(id);
+  const [userId, setUserId] = useState(state?.id);
 
   const onLogout = () => {
     authService.logout();
   };
 
   useEffect(() => {
-    console.log('userid', id, userId);
+    console.log('userId: ', userId);
     if (!userId) {
       return;
     }
@@ -29,8 +29,9 @@ const Maker = ({ FileInput, authService, cardRepository }) => {
 
   useEffect(() => {
     authService.onAuthChange((user) => {
+      console.log('onAuthChange', user);
       if (user) {
-        setUserId(user.id);
+        setUserId(user.uid);
       } else {
         navigate('/');
       }
